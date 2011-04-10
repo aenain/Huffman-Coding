@@ -1,7 +1,5 @@
 #include <iostream>
-#include <string>
-#include "additionals.h"
-#include "occurrences.h"
+#include "translation.h"
 using namespace std;
 
 // argv[0] - nazwa programu
@@ -12,23 +10,27 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
   if (argc == 4) {
-    string code_option("-c"), decode_option("-d");
-    enum Mode { code, decode };
-    Mode mode;
+    codes_by_char codes;
+    chars_by_code chars;
 
-    if (argv[1] == code_option) mode = code;
-    else if (argv[1] == decode_option) mode = decode;
-    else {} // TODO! error. Some weird mode?
+    TranslationMode translation_mode;
+    translation_mode.set_mode( argv[1] );
 
-    ios::openmode openmode = (mode == decode) ? ios::binary : ios::in;
-
-    Occurrences occurrences(argv[2], openmode);
+    Occurrences occurrences(argv[2], translation_mode.source);
     occurrences.count();
 
-    //HuffmanCoding huffman_coding( occurrences.as_map() ); // 
-    //huffman_coding.build_tree();
-    //Translation translation( huffman_coding.as_map(), argv[3] );
-    //translation.translate();
+    HuffmanCoding huffman_coding( occurrences.as_map() );
+    huffman_coding.build_tree();
+    huffman_coding.to_map();
+
+    //Translation translation( argv[2], argv[3], translation_mode.source, translation_mode.destination );
+    Translation translation( argv[2], argv[3] ); // test dla plików txt
+
+    if (translation_mode.mode == TranslationMode::code)
+      translation.translate( huffman_coding.codes, occurrences.by_ascii );
+
+    else
+      translation.translate( huffman_coding.chars );
 
   }
   else

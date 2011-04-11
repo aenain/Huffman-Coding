@@ -6,24 +6,31 @@ void Occurrences::count() {
   if ( in.good() ) {
     string buffer;
     int_for_char index;
+    long_int_type row = 0;
     int_type number_of_occurrences;
     char znak;
 
     fill_ascii_table_with_zeros();
 
     if (mode == code) { // txt -> binary
-      while ( in >> buffer ) {
+      while ( getline( in, buffer ) ) {
+        if (row) buffer.insert( buffer.begin(), '\n' ); // dirty-hack I know, but works.
+
         for (string::iterator it = buffer.begin(); it != buffer.end(); it++) {
           index = static_cast<int_for_char>(*it);
           if (index < 0 || index > ASCII_SIZE) {} // TODO! error. Char not from ascii scope.
           by_ascii[ index ]++;
         }
+        row++;
       }
     }
     else {
       for (int i = 0; i <= ASCII_SIZE; i++) { // binary -> txt
         in >> number_of_occurrences;
         by_ascii[i] = number_of_occurrences;
+        position_in_binary = in.tellg(); // to ommit whitespaces
+        position_in_binary++;
+        in.seekg(position_in_binary);
       }
     }
 

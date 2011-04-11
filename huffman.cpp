@@ -18,7 +18,14 @@ int main(int argc, char * argv[]) {
 
     Occurrences occurrences(argv[2], translation_mode.source);
     occurrences.count();
-
+    /*
+    for(int i = 0; i <= Occurrences::ASCII_SIZE; i++) {
+      if (occurrences.by_ascii[i]) {
+        if (i == 10) cout << "enter: " << occurrences.by_ascii[i] << endl;
+        else cout << static_cast<char>(i) << ": " << occurrences.by_ascii[i] << endl;
+      }
+    }
+    */
     HuffmanCoding huffman_coding( occurrences.as_map() );
     huffman_coding.build_tree();
     huffman_coding.to_map();
@@ -30,7 +37,7 @@ int main(int argc, char * argv[]) {
       translation.translate( huffman_coding.codes, occurrences.by_ascii );
 
     else
-      translation.translate( huffman_coding.chars );
+      translation.translate( huffman_coding.chars, occurrences.position_in_binary );
 
   }
   else

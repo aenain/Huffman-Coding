@@ -129,7 +129,7 @@ void Translation::translate(const codes_by_char & codes, const int_type by_ascii
       if (number_of_char >= number_of_loaded_chars) {
         number_of_char = 0;
         fill_with_zeros(input_buffer, 1024);
-        in >> input_buffer;
+        in.read( input_buffer, 1024 );
       }
     }
 
@@ -156,8 +156,8 @@ void Translation::translate(const chars_by_code & codes, long_int_type & positio
 
     in.seekg(position_in_binary); // move after table of ascii (the current value will be number of bits to read)
     in >> how_many_bits; // how many bits are valid? (rest is a garbage)
-    how_many_bits = 183; // TODO! ZAHARDCODE'owane!!
     cout << "dekodowanie: " << how_many_bits << endl;
+    //how_many_bits = 183; // TODO! wybadać czemu działa?
 
     position_in_binary = in.tellg();
     position_in_binary++;
@@ -192,7 +192,7 @@ void Translation::translate(const chars_by_code & codes, long_int_type & positio
       number_of_byte++;
       if (number_of_byte >= number_of_loaded_bytes) {
         number_of_byte = 0;
-        in >> input_buffer; // does it really work?
+        in.read( input_buffer, 1024 ); // does it really work?
       }
     }
   }

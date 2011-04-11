@@ -14,6 +14,7 @@ class Translation : public TranslationMode {
   private:
     ifstream in;
     ofstream out;
+    static const unsigned int HOW_MANY_DIGITS_HAS_NUMBER_OF_BITS = 10;
     long_int_type how_many_bits;
     string decoded_buffer;
     unsigned char encoded_buffer[1024];

@@ -91,6 +91,7 @@ unsigned int Translation::match_and_erase(string & encode_buffer, const codes_by
 
 void Translation::translate(const codes_by_char & codes, const int_type by_ascii[]) { // txt -> binary
   long_int_type position_in_binary;
+  string mock_for_number_of_bits;
   state = in_progress;
 
   if ( out.good() && in.good() ) {
@@ -98,7 +99,11 @@ void Translation::translate(const codes_by_char & codes, const int_type by_ascii
       out << by_ascii[i] << ' ';
 
     position_in_binary = out.tellp();
-    out << position_in_binary << ' ';
+
+    for (int i = 0; i < HOW_MANY_DIGITS_HAS_NUMBER_OF_BITS; i++)
+      mock_for_number_of_bits += '1';
+
+    out << mock_for_number_of_bits << ' ';
 
     char input_buffer[1024];
     string encode_buffer;
@@ -123,7 +128,8 @@ void Translation::translate(const codes_by_char & codes, const int_type by_ascii
         if ((result = codes.find(input_buffer[i])) != codes.end())
           encode_buffer += result -> second; // dodanie do bufora kodu danego znaku.
 
-        bits_left_in_current_byte = match_and_erase(encode_buffer, codes);          
+        bits_left_in_current_byte = match_and_erase(encode_buffer, codes);
+        number_of_char++;
       }
 
       if (number_of_char >= number_of_loaded_chars) {
@@ -133,11 +139,14 @@ void Translation::translate(const codes_by_char & codes, const int_type by_ascii
       }
     }
 
-    if (bits_left_in_current_byte) {
+    if (bits_left_in_current_byte)
       match_and_erase(encode_buffer, codes, true); // forces completion last byte with garbage :)
-      out.seekp(position_in_binary);
-      out << how_many_bits;
-    }
+
+    out.seekp(position_in_binary);
+    out.width(HOW_MANY_DIGITS_HAS_NUMBER_OF_BITS);
+    out << how_many_bits;
+    out.width(1);
+
     cout << "kodowanie: " << how_many_bits << endl;
   }
 
@@ -156,6 +165,7 @@ void Translation::translate(const chars_by_code & codes, long_int_type & positio
 
     in.seekg(position_in_binary); // move after table of ascii (the current value will be number of bits to read)
     in >> how_many_bits; // how many bits are valid? (rest is a garbage)
+
     cout << "dekodowanie: " << how_many_bits << endl;
     //how_many_bits = 183; // TODO! wybadać czemu działa?
 

@@ -18,7 +18,7 @@ void Occurrences::count() {
 
         for (string::iterator it = buffer.begin(); it != buffer.end(); it++) {
           index = static_cast<int_for_char>(*it);
-          if (index < 0 || index > ASCII_SIZE) {} // TODO! error. Char not from ascii scope.
+          if (index < 0 || index > ASCII_SIZE) { continue; } // TODO! error. Char not from ascii scope.
           by_ascii[ index ]++;
         }
         row++;
